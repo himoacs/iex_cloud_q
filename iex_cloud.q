@@ -1,20 +1,21 @@
-  
+
 /
-###########################################################################################
-# Author : Himanshu Gupta																
-# Description: IEX is a new exchange that is slowly becoming popular. It provides a lot 
+#############################################################################################
+# Author : Himanshu Gupta
+# Description: IEX is a new exchange that is slowly becoming popular. It provides a lot
 # of its data for free through its API. Recently, it updated its API from v1 to IEX Cloud.
 # The new API is more limited on what kind of data you can access and how much of it you can
-# access in a given time period for free. To get access to more data, you have to pay. 
+# access in a given time period for free. To get access to more data, you have to pay.
 # You also have to create an IEX Cloud account and pass an authentication token with each
-# request. You can create an account here: https://iexcloud.io/cloud-login#/register/
-# This code is a q/kdb+ wrapper to make it easy to get data from IEX. 														
+# request.
+# You can create an account here: https://iexcloud.io/cloud-login#/register/
+# This code is a q/kdb+ wrapper to make it easy to get data from IEX.
 # IEX api URL: https://iexcloud.io/docs/api/#api-reference
-###########################################################################################
+#############################################################################################
 \
 
 / YOU MUST USER YOUR OWN TOKEN TO BE ABLE TO GET DATA FROM IEX
-token:<insery_your_token_here>
+token:"<insery_your_token_here>";
 
 / URLs
 prefix: "https://cloud.iexapis.com/stable/";
@@ -41,7 +42,7 @@ company_news:{[sym;cnt]
 
  }
 
-/ Get general info about a company 
+/ Get general info about a company
 / company_info[`aapl]
 
 company_info:{[sym]
@@ -50,7 +51,7 @@ company_info:{[sym]
   main_url:raze prefix,"stock/",sym,"/company",suffix;
   enlist get_data[main_url]
 
- } 
+ }
 
 / Get company dividends
 / range can be 1y, 2y, 5y, ytd, 6m, 3m, 1m, next
@@ -61,7 +62,7 @@ dividends:{[sym;range]
   sym:string(lower sym);
   main_url:raze prefix,"stock/",sym,"/dividends/",range,suffix;
   data:get_data[main_url];
-  
+
   update "D"$exDate, "D"$paymentDate, "D"$recordDate, "D"$declaredDate, "D"$date from data
 
  }
@@ -76,7 +77,7 @@ earnings:{[sym;cnt]
   cnt:string(cnt);
   main_url:raze prefix,"stock/",sym,"/earnings/",suffix,"&last=",cnt;
   data:get_data[main_url][`earnings];
-  
+
   update "D"$EPSReportDate, "D"$fiscalEndDate from data
 
  }
@@ -104,7 +105,7 @@ historical_prices_range:{[sym;range]
   sym:string(lower sym);
   main_url:raze prefix,"stock/",sym,"/chart/",range,suffix;
   data:get_data[main_url];
-  
+
   update "D"$date, "U"$minute from data
 
  }
@@ -117,7 +118,7 @@ historical_prices_day:{[sym;date]
   sym:string(lower sym);
   main_url:raze prefix,"stock/",sym,"/chart/","date/",date,suffix;
   data:get_data[main_url];
-  
+
   update "D"$date, "U"$minute from data
 
  }
@@ -131,7 +132,7 @@ intraday_prices:{[sym]
   sym:string(lower sym);
   main_url:raze prefix,"stock/",sym,"/intraday-prices",suffix;
   data:get_data[main_url];
-  
+
   update "D"$date, "U"$minute from data
 
  }
@@ -144,19 +145,19 @@ key_stats:{[sym]
   sym:string(lower sym);
   main_url:raze prefix,"stock/",sym,"/stats",suffix;
   data:enlist get_data[main_url];
-  
+
   update "D"$nextEarningsDate, "D"$exDividendDate from data
 
  }
 
 / Most active quotes for the day
-/ most_active_quotes[] 
+/ most_active_quotes[]
 
 most_active_quotes:{
 
   main_url:raze prefix,"stock/market/list/mostactive",suffix;
   data:get_data[main_url];
-  
+
   update convert_epoch[openTime], convert_epoch[closeTime],convert_epoch[latestUpdate],convert_epoch[iexLastUpdated],convert_epoch[delayedPriceTime],convert_epoch[extendedPriceTime] from data
  }
 
@@ -167,7 +168,7 @@ gainers:{
 
   main_url:raze prefix,"stock/market/list/gainers",suffix;
   data:get_data[main_url];
-  
+
   update convert_epoch[openTime], convert_epoch[closeTime],convert_epoch[latestUpdate],convert_epoch[iexLastUpdated],convert_epoch[delayedPriceTime],convert_epoch[extendedPriceTime] from data
  }
 
@@ -178,19 +179,19 @@ losers:{
 
   main_url:raze prefix,"stock/market/list/losers",suffix;
   data:get_data[main_url];
-  
+
   update convert_epoch[openTime], convert_epoch[closeTime],convert_epoch[latestUpdate],convert_epoch[iexLastUpdated],convert_epoch[delayedPriceTime],convert_epoch[extendedPriceTime] from data
  }
- 
+
 / Company's previous day data - HLOC
-/ previous_day[`aapl] 
+/ previous_day[`aapl]
 
 previous_day:{[sym]
 
   sym:string(lower sym);
   main_url:raze prefix,"stock/",sym,"/previous",suffix;
   data: enlist get_data[main_url];
-  
+
   update "D"$date from data
 
  }
@@ -251,7 +252,7 @@ latest_quote_trade:{[syms]
   syms:$[1<count syms;"," sv string(upper syms);string(syms)];
   main_url: prefix,"tops",suffix,"&symbols=",syms;
   data:get_data[main_url];
-  
+
   update convert_epoch[lastUpdated],convert_epoch[lastSaleTime] from data
 
  }
