@@ -15,7 +15,7 @@
 \
 
 / YOU MUST USER YOUR OWN TOKEN TO BE ABLE TO GET DATA FROM IEX
-token:"<insery_your_token_here>";
+token:"<insert_your_token_here>";
 
 / URLs
 prefix: "https://cloud.iexapis.com/stable/";
