@@ -53,6 +53,19 @@ company_info:{[sym]
 
  }
 
+/ Company's key stats
+/ key_stats[`aapl]
+
+key_stats:{[sym]
+
+  sym:string(lower sym);
+  main_url:raze prefix,"stock/",sym,"/stats",suffix;
+  data:enlist get_data[main_url];
+
+  update "D"$nextEarningsDate, "D"$exDividendDate from data
+
+ }
+
 / Get company dividends
 / range can be 1y, 2y, 5y, ytd, 6m, 3m, 1m, next
 / dividends[`aapl;"1y"]
@@ -137,23 +150,11 @@ intraday_prices:{[sym]
 
  }
 
-/ Company's key stats
-/ key_stats[`aapl]
 
-key_stats:{[sym]
+/ Data for most active stocks of the day
+/ most_active[]
 
-  sym:string(lower sym);
-  main_url:raze prefix,"stock/",sym,"/stats",suffix;
-  data:enlist get_data[main_url];
-
-  update "D"$nextEarningsDate, "D"$exDividendDate from data
-
- }
-
-/ Most active quotes for the day
-/ most_active_quotes[]
-
-most_active_quotes:{
+most_active:{
 
   main_url:raze prefix,"stock/market/list/mostactive",suffix;
   data:get_data[main_url];
@@ -246,6 +247,7 @@ quote:{[sym]
 
 / Latest quote and trade for one or more companies
 / latest_quote_trade[`aapl`ibm]
+/ This function will only on days when markets are open
 
 latest_quote_trade:{[syms]
 
